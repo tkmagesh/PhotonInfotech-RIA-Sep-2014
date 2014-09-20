@@ -56,6 +56,16 @@ describe("A calculator add operation", function(){
         //assert
         expect(result).toBe(expectedResult);
     });
+      it("should be able to add more than two numbers", function(){
+        //arrange
+        var    expectedResult = 100;
+        
+        //act
+        var result = add(10,20,30,40);
+        
+        //assert
+        expect(result).toBe(expectedResult);
+    });
     it("should be able to add functions returning numbers", function(){
         //arrange
         var f1 = function(){ return 10;},
