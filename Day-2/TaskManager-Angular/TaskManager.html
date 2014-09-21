@@ -25,18 +25,32 @@
             };
             $scope.toggleCompletion = function(task){
                 task.isCompleted = !task.isCompleted
+            };
+            $scope.getCompletedTaskCount = function(){
+                return $scope.tasks.filter(function(t){
+                    return t.isCompleted;
+                }).length;
+            };
+            $scope.removeCompleted = function(){
+                console.log("remove clicked");
+                var oldTasks = $scope.tasks;
+                $scope.tasks = oldTasks.filter(function(t){
+                    return !t.isCompleted
+                });
             }
         }
     </script>
 </head>
 <body ng-app>
    <div ng-controller="taskController">
-        <h1>Task Manager -[{{tasks.length}}]</h1>
+        <h1>Task Manager -[<span class="completed">{{getCompletedTaskCount()}}</span>/<span>{{tasks.length}}</span>]</h1>
         <hr>
         <label for="">Task :</label>
         <input type="text" name="" id="" ng-model="newTask">
-        <input type="button" value="Add Task" id="btnAdd" ng-click="addTask(newTask)">
-        <input type="button" value="Remove Completed" id="btnRemoveCompleted">
+        <input type="button" value="Add Task" id="btnAdd" ng-click="addTask(newTask)" ng-disabled="!newTask">
+        <input type="button" value="Remove Completed" 
+          ng-click="removeCompleted()" ng-disabled="!getCompletedTaskCount()"
+        >
         <ol id="olTaskList">
             <li 
                 ng-repeat="task in tasks" 

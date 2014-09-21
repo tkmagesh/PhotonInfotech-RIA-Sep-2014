@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Manager</title>
+    <style>
+    .completed  {
+        color : red;
+        text-decoration: line-through;
+        font-style: italic;
+        font-weight: bold;
+    }
+            
+    </style>
+    <script src="/javascripts/angular.js"></script>
+    <script>
+        var taskApp = angular.module("taskApp",[]);
+        
+        taskApp.service('taskService',  function($http){
+          
+                this.getAll = function(){
+                    var httpPromise= $http({method : "GET", url : "/tasks/"});
+                    return httpPromise;
+                };
+                this.add = function(taskName){
+                    var newTask = {
+                        name : taskName,
+                        isCompleted : false
+                    };
+                    return $http({
+                        method : "post", 
+                        url : "/tasks/", 
+                        data : newTask
+                    });
+                    
+                };
+                this.update = function(task){
+                    return $http({
+                        method : "put",
+                        url : '/tasks/' + task.id,
+                        data : task
+                    });
+                };
+            
+        });
+        /*taskApp.factory('taskService', function($http){
+            return {
+                getAll : function(){
+                    var httpPromise= $http({method : "GET", url : "/tasks/"});
+                    return httpPromise;
+                },
+                add : function(taskName){
+                    var newTask = {
+                        name : taskName,
+                        isCompleted : false
+                    };
+                    return $http({
+                        method : "post", 
+                        url : "/tasks/", 
+                        data : newTask
+                    });
+                    
+                },
+                update : function(task){
+                    return $http({
+                        method : "put",
+                        url : '/tasks/' + task.id,
+                        data : task
+                    });
+                }
+            }
+        });*/
+        
+        taskApp.controller("taskController", function($scope,$http, taskService){
+            $scope.tasks = [];
+            function populateTasks(){
+                taskService.getAll().then(function(response){
+                    $scope.tasks = response.data;
+                });
+            }
+            populateTasks();
+            $scope.addTask = function(taskName){
+                taskService.add(taskName)
+                .then(populateTasks);
+                
+            };
+            $scope.toggleCompletion = function(task){
+                task.isCompleted = !task.isCompleted
+                taskService.update(task).then(populateTasks);
+            };
+            $scope.getCompletedTaskCount = function(){
+                return $scope.tasks.filter(function(t){
+                    return t.isCompleted;
+                }).length;
+            };
+            $scope.removeCompleted = function(){
+                console.log("remove clicked");
+                var oldTasks = $scope.tasks;
+                $scope.tasks = oldTasks.filter(function(t){
+                    return !t.isCompleted
+                });
+            }
+        });
+        taskApp.filter('trimText',function(){
+            return function(data,limit){
+                data = data || '';
+                return data.length < limit ? data : data.substr(0,limit) + "...";
+            };
+        });
+    </script>
+</head>
+<body ng-app='taskApp'>
+   <div ng-controller="taskController">
+        <h1>Task Manager -[<span class="completed">{{getCompletedTaskCount()}}</span>/<span>{{tasks.length}}</span>]</h1>
+        <hr>
+        search : <input type="search" ng-model="searchTask.name">
+        <select ng-model="sortOrder">
+            <option value="name">Name</option>
+            <option value="isCompleted">Completion Status</option>
+        </select>
+        <input type="button" value="Sort" ng-click="reverse = !reverse">
+        <input type="range" min="10" max="30" ng-model="taskNameLength">
+        <hr>
+        <label for="">Task :</label>
+        <input type="text" name="" id="" ng-model="newTask">
+        <input type="button" value="Add Task" id="btnAdd" ng-click="addTask(newTask)" ng-disabled="!newTask">
+        <input type="button" value="Remove Completed" 
+          ng-click="removeCompleted()" ng-disabled="!getCompletedTaskCount()"
+        >
+        <ol id="olTaskList">
+            <li 
+                ng-repeat="task in tasks | filter:searchTask |orderBy:sortOrder:reverse" 
+                ng-click="toggleCompletion(task)"
+                ng-class="{completed : task.isCompleted}"
+            >{{task.name | trimText:taskNameLength }}</li>
+        </ol>
+   </div>
+</body>
+</html>
