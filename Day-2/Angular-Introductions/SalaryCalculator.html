@@ -3,21 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <title>Salar Calculator</title>
+    <style>
+    .message{
+        position: absolute;
+        right: 0px;
+        bottom: 0px;
+        margin: 5px;
+        background-color: #eee;
+        border: 2px solid black;
+        padding: 2px;
+    }
+    </style>
+    <script src="angular.js"></script>
+    
+    <script>
+    function salaryCalculatorController( $scope){
+        $scope.basic = 10000;
+        $scope.hra = 2000;
+        $scope.da = 3000;
+        $scope.tax = 10;
+        $scope.calculate = function(){
+            var gross = parseInt($scope.basic,10) + parseInt($scope.hra,10) + parseInt($scope.da,10);
+            $scope.salary = gross * ((100-parseInt($scope.tax,10))/100);
+        }
+    }
+    </script>
 </head>
-<body>
-    <h1>Salary Calculator</h1>
-    <hr>
-    <div><label>Basic :</label><input type="text" name="" id="txtBasic"></div>
-    <div><label>HRA :</label><input type="text" name="" id="txtHra"></div>
-    <div><label>DA :</label><input type="text" name="" id="txtDa"></div>
-    <div>
-        <label>Tax :</label>
-        <input type="range" name="" id="rangeTax" min="0" max="50">
-        <span id="spanTax">[Tax%]</span>
-    </div>
-    <div><input type="button" value="Calculate" id="btnCalculate"></div>
-    <div>
-        <div id="divResult"></div>
-    </div>
+<body ng-app >
+   <div ng-controller="salaryCalculatorController">
+       <h1>Salary Calculator</h1>
+        <hr>
+        <div><label>Basic :</label><input type="text" ng-model="basic" ></div>
+        <div><label>HRA :</label><input type="text" ng-model="hra"></div>
+        <div><label>DA :</label><input type="text" ng-model="da"></div>
+        <div>
+            <label>Tax :</label>
+            <input type="range" ng-model="tax" min="0" max="50">
+            <span id="spanTax">{{tax}}%</span>
+        </div>
+        <div><input type="button" value="Calculate" ng-click="calculate()"></div>
+        <div>
+            <div id="divResult">{{salary}}</div>
+        </div>
+   </div>
+  
 </body>
 </html>
