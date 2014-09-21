@@ -9,8 +9,10 @@ var tasks = [
 
 /* GET tasks listing. */
 router.get('/', function(req, res) {
-    res.write(JSON.stringify(tasks));
-    res.end();
+    setTimeout(function(){
+        res.write(JSON.stringify(tasks));
+        res.end();
+    },10000);
 });
 
 router.post('/', function(req,res){

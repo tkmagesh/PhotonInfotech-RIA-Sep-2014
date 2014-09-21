@@ -1,0 +1,27 @@
+<div>
+        
+        <h1>Task Manager [<span class="completed">{{getCompletedTaskCount()}}</span>/<span>{{getTaskCount()}}</span>]</h1>
+        <hr>
+        <label for="">Task :</label>
+        <input type="text" name="" id="" ng-model="newTask">
+        <select ng-model="category">
+           <option ng-repeat="category in categories" value="{{category}}">
+               {{category}}
+           </option>
+        </select>
+        <input type="button" value="Add Task" id="btnAdd" ng-click="addTask(newTask,category)" ng-disabled="!newTask">
+        <input type="button" value="Remove Completed" 
+          ng-click="removeCompleted()" ng-disabled="!getCompletedTaskCount()"
+        >
+        <div ng-repeat="(category,taskList) in getTasksToDisplay()" ng-hide="taskList.length === 0">
+            <h1>{{category}}</h1>
+            <ol id="olTaskList" >
+                <li 
+                    ng-repeat="task in taskList" 
+                    ng-click="toggleCompletion(task)"
+                    ng-class="{completed : task.isCompleted}"
+                >{{task.name }}</li>
+            </ol>
+        </div>
+        
+   </div>

@@ -1,0 +1,9 @@
+<div >
+      <h1>Category - [{{getCount()}}]</h1>
+        <hr>
+        <span>Category :</span><input type="text" ng-model="newCategory">
+        <input type="button" value="Add Category" ng-click="addCategory(newCategory)">
+        <ul>
+            <li ng-repeat="category in getAll()"><a href="#/tasks?category={{category}}">{{category}}</a></li>
+        </ul>
+  </div>
